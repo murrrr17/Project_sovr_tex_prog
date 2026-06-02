@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мониторинг Акций РФ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0B0F19; /* Глубокий Midnight фон */
+            --card-bg: rgba(255, 255, 255, 0.04); /* Эффект жидкого стекла */
+            --card-border: rgba(255, 255, 255, 0.08);
+            --text-main: #F3F4F6;
+            --text-muted: #9CA3AF;
+            --accent-green: #10B981;
+            --accent-red: #EF4444;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0 0 12px 0;
+            background: linear-gradient(135deg, #FFFFFF, #9CA3AF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .date-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.06);
+            padding: 6px 18px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            border: 1px solid var(--card-border);
+            letter-spacing: 0.5px;
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--accent-red);
+            padding: 20px;
+            border-radius: 16px;
+            text-align: center;
+            color: var(--accent-red);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 22px;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .card-header {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 18px;
+        }
+
+        .stock-ticker {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            background: linear-gradient(135deg, #FFF, #9CA3AF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stock-name {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .stock-value {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+            letter-spacing: -0.5px;
+        }
+
+        .stock-change {
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+        }
+
+        .change-up {
+            color: var(--accent-green);
+        }
+
+        .change-down {
+            color: var(--accent-red);
+        }
+
+        .change-icon {
+            margin-right: 4px;
+            font-size: 0.75rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Котировки Акций</h1>
+            {% if date %}
+                <div class="date-badge">Данные MOEX ISS на: {{ date }}</div>
+            {% endif %}
+        </header>
+
+        {% if error %}
+            <div class="error-message">
+                {{ error }}
+            </div>
+        {% else %}
+            <div class="grid">
+                {% for stock in stocks %}
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="stock-ticker">{{ stock.ticker }}</span>
+                            <span class="stock-name" title="{{ stock.name }}">{{ stock.name }}</span>
+                        </div>
+                        <div class="stock-value">{{ stock.value }} ₽</div>
+                        
+                        <div class="stock-change {% if stock.change >= 0 %}change-up{% else %}change-down{% endif %}">
+                            <span class="change-icon">{% if stock.change >= 0 %}▲{% else %}▼{% endif %}</span>
+                            {% if stock.change >= 0 %}+{% endif %}{{ stock.change }} ₽
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,6 @@
+flask
+requests
+click
+blinker
+charset_normalizer
+certifi
